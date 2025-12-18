@@ -34,8 +34,8 @@ data/processed/*.csv
 
 # Models
 models/*.pkl
-models/v1/*.pkl
-models/v1/metadata.json
+!models/v1/*.pkl
+!models/v1/metadata.json
 models/xgb_model.pkl
 
 # IDEs
