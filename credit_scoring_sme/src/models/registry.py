@@ -8,10 +8,16 @@ class ModelRegistry:
     """
     Manages model versioning, saving, and loading.
     """
-    def __init__(self, base_path='models'):
-        self.base_path = base_path
-        if not os.path.exists(base_path):
-            os.makedirs(base_path)
+    def __init__(self, base_path=None):
+        if base_path is None:
+            # Default to 'models' directory in the project root (credit_scoring_sme/models)
+            # This file is in src/models/registry.py
+            self.base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../models'))
+        else:
+            self.base_path = base_path
+            
+        if not os.path.exists(self.base_path):
+            os.makedirs(self.base_path)
             
     def save_model(self, model, version_tag, metadata=None):
         """

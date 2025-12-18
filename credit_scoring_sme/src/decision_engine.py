@@ -32,12 +32,16 @@ class CreditDecisionEngine:
 
     def _load_reference_features(self):
         try:
-            loader = DataLoader() # Assumes default path works
+            # Resolve data directory absolute path
+            # This file is in src/decision_engine.py
+            data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/raw'))
+            loader = DataLoader(data_dir=data_dir)
             t, a, l = loader.load_all()
             fe = FeatureEngineer()
             df = fe.build_dataset(t, a, l)
             return df.drop('is_default', axis=1) # Keep raw features
-        except Exception:
+        except Exception as e:
+            print(f"Warning: Could not load reference features: {e}")
             return pd.DataFrame() # Fallback
 
     def credit_decision(self, input_data: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
