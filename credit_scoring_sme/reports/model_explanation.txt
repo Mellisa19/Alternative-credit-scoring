@@ -1,0 +1,7 @@
+Top factors influencing credit score:
+
+1. txn_volatility (Impact: 13.4%): Consistency of daily transactions. High volatility suggests unstable business.
+2. ad_cpa (Impact: 13.3%): Cost to acquire a customer. Lower is better.
+3. ad_roi (Impact: 12.1%): Return on Investment for ads. Measures marketing efficiency.
+4. txn_count (Impact: 10.4%): Total number of transactions (Volume).
+5. avg_inflow (Impact: 10.1%): Average size of incoming payments.

@@ -1,0 +1,90 @@
+# Alternative Credit Scoring System Configuration
+# ================================================
+
+# Data Configuration
+data:
+  raw_data_path: "data/raw/"
+  processed_data_path: "data/processed/"
+  external_data_path: "data/external/"
+
+  # Expected dataset files
+  datasets:
+    business_transactions: "business_transactions.csv"
+    cash_flow: "cash_flow_patterns.csv"
+    advertising: "advertising_performance.csv"
+    business_info: "business_basic_info.csv"
+    loan_history: "loan_repayment_history.csv"
+
+# Model Configuration
+model:
+  # Target variable
+  target_column: "loan_repaid"  # 1 = repaid, 0 = defaulted
+
+  # Credit score mapping
+  credit_score_range: [0, 100]
+  risk_categories:
+    low: [70, 100]
+    medium: [40, 69]
+    high: [0, 39]
+
+  # Feature engineering
+  features:
+    cash_flow_periods: 12  # months
+    ad_roi_window: 6       # months
+    stability_window: 12   # months for revenue stability
+
+# Training Configuration
+training:
+  test_size: 0.2
+  val_size: 0.2
+  random_state: 42
+
+  # Cross-validation
+  cv_folds: 5
+
+  # Model hyperparameters (examples)
+  models:
+    logistic_regression:
+      C: [0.01, 0.1, 1.0, 10.0]
+      penalty: ["l1", "l2"]
+
+    random_forest:
+      n_estimators: [100, 200, 500]
+      max_depth: [10, 20, None]
+      min_samples_split: [2, 5, 10]
+
+    xgboost:
+      n_estimators: [100, 200, 500]
+      max_depth: [3, 6, 9]
+      learning_rate: [0.01, 0.1, 0.3]
+
+# Evaluation Metrics
+evaluation:
+  primary_metric: "roc_auc"  # For imbalanced classification
+  secondary_metrics:
+    - "precision"
+    - "recall"
+    - "f1"
+    - "accuracy"
+
+  # Business metrics
+  business_metrics:
+    cost_false_positive: 1.0    # Cost of lending to defaulter
+    cost_false_negative: 5.0    # Cost of not lending to good borrower
+
+# Explainability Configuration
+explainability:
+  shap_sample_size: 1000  # Max samples for SHAP explanations
+  feature_importance_top_n: 20
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_path: "logs/credit_scoring.log"
+
+# API Configuration (for future deployment)
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false

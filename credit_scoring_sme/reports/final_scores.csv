@@ -1,0 +1,101 @@
+business_id,prob_repay,credit_score,risk_category,decision_summary
+SME-001,0.8755940284342659,87,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-002,0.6108187070282658,61,Medium Risk,"This business has a Medium Risk score due to low profitability, unstable cash flow, inefficient ad spend."
+SME-003,0.7682657094261784,76,Low Risk,This business shows consistent performance across all metrics.
+SME-004,0.7636299481286524,76,Low Risk,This business shows consistent performance across all metrics.
+SME-005,0.8018267860307334,80,Low Risk,This business shows consistent performance across all metrics.
+SME-006,0.738195132718159,73,Low Risk,This business has a Low Risk score driven by efficient marketing.
+SME-007,0.7720814573451706,77,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-008,0.5618716994395612,56,Medium Risk,"This business has a Medium Risk score due to high burn rate, low market presence."
+SME-009,0.8782484890874309,87,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-010,0.8535990134765483,85,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-011,0.46893978343401216,46,High Risk,"This business has a High Risk score due to low profitability, low market presence."
+SME-012,0.5004180620205347,50,Medium Risk,This business has a Medium Risk score due to low market presence.
+SME-013,0.4783527857309264,47,High Risk,This business is flagged as High Risk due to a combination of moderate risk factors.
+SME-014,0.21762860027629846,21,High Risk,This business has a High Risk score due to low profitability.
+SME-015,0.9389305768163118,93,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-016,0.6372282659353428,63,Medium Risk,"This business has a Medium Risk score due to low profitability, low market presence."
+SME-017,0.745989949318022,74,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-018,0.16519163292847502,16,High Risk,"This business has a High Risk score due to low profitability, high burn rate."
+SME-019,0.8490510235593439,84,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-020,0.8591226639546066,85,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-021,0.7926896360573507,79,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-022,0.8741827701985807,87,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-023,0.4172107787461637,41,High Risk,"This business has a High Risk score due to unstable cash flow, low market presence."
+SME-024,0.7074290009524171,70,Low Risk,"This business has a Low Risk score driven by strong cash flow, stable transaction volume, efficient marketing."
+SME-025,0.4325951719819474,43,High Risk,This business has a High Risk score due to low profitability.
+SME-026,0.30382804291885257,30,High Risk,"This business has a High Risk score due to low profitability, low market presence."
+SME-027,0.8134558232417132,81,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-028,0.9002158440516561,90,Low Risk,"This business has a Low Risk score driven by strong cash flow, stable transaction volume, efficient marketing."
+SME-029,0.30543402512520157,30,High Risk,"This business has a High Risk score due to unstable cash flow, high burn rate, inefficient ad spend."
+SME-030,0.337177992924165,33,High Risk,"This business has a High Risk score due to high burn rate, inefficient ad spend."
+SME-031,0.3207555427029111,32,High Risk,"This business has a High Risk score due to low profitability, high burn rate, low market presence."
+SME-032,0.6790466998123506,67,Medium Risk,This business has a Medium Risk score due to low market presence.
+SME-033,0.7303642856279988,73,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-034,0.15126361832611834,15,High Risk,This business has a High Risk score due to low profitability.
+SME-035,0.640269261637475,64,Medium Risk,This business is flagged as Medium Risk due to a combination of moderate risk factors.
+SME-036,0.7782125273076275,77,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-037,0.3971000345691815,39,High Risk,"This business has a High Risk score due to low profitability, high burn rate, inefficient ad spend."
+SME-038,0.6390756734149882,63,Medium Risk,"This business has a Medium Risk score due to unstable cash flow, low market presence."
+SME-039,0.6905146739569298,69,Medium Risk,"This business has a Medium Risk score due to unstable cash flow, high burn rate, low market presence."
+SME-040,0.8251568197883988,82,Low Risk,This business shows consistent performance across all metrics.
+SME-041,0.7573383192806904,75,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-042,0.7447160325886096,74,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-043,0.8739783448234454,87,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-044,0.9256332493592696,92,Low Risk,"This business has a Low Risk score driven by stable transaction volume, efficient marketing."
+SME-045,0.9101586457316873,91,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-046,0.765932069754797,76,Low Risk,"This business has a Low Risk score driven by stable transaction volume, efficient marketing."
+SME-047,0.3959768576542397,39,High Risk,"This business has a High Risk score due to high burn rate, low market presence."
+SME-048,0.29883348595848597,29,High Risk,"This business has a High Risk score due to unstable cash flow, high burn rate, inefficient ad spend."
+SME-049,0.8059123151357778,80,Low Risk,"This business has a Low Risk score driven by stable transaction volume, efficient marketing."
+SME-050,0.34542942397959064,34,High Risk,"This business has a High Risk score due to high burn rate, inefficient ad spend."
+SME-051,0.6943598341119064,69,Medium Risk,"This business has a Medium Risk score due to unstable cash flow, high burn rate, low market presence."
+SME-052,0.773869623216406,77,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-053,0.7564378050345877,75,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-054,0.6105180694300052,61,Medium Risk,"This business has a Medium Risk score due to high burn rate, low market presence."
+SME-055,0.8029249767400596,80,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-056,0.3636894012309473,36,High Risk,This business has a High Risk score due to unstable cash flow.
+SME-057,0.7361704437137006,73,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-058,0.322710661990598,32,High Risk,"This business has a High Risk score due to high burn rate, low market presence."
+SME-059,0.404935549690833,40,High Risk,"This business has a High Risk score due to low profitability, high burn rate, inefficient ad spend."
+SME-060,0.7370300269365109,73,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-061,0.728346418706578,72,Low Risk,This business shows consistent performance across all metrics.
+SME-062,0.5517323748662758,55,Medium Risk,"This business has a Medium Risk score due to low profitability, inefficient ad spend."
+SME-063,0.8968359739217862,89,Low Risk,"This business has a Low Risk score driven by strong cash flow, stable transaction volume, efficient marketing."
+SME-064,0.43345859046155183,43,High Risk,"This business has a High Risk score due to low profitability, high burn rate, low market presence."
+SME-065,0.8965821994845894,89,Low Risk,This business has a Low Risk score driven by efficient marketing.
+SME-066,0.38290022021527775,38,High Risk,This business has a High Risk score due to unstable cash flow.
+SME-067,0.7756179657841389,77,Low Risk,"This business has a Low Risk score driven by stable transaction volume, efficient marketing."
+SME-068,0.8360564423938027,83,Low Risk,This business has a Low Risk score driven by efficient marketing.
+SME-069,0.5651144788050185,56,Medium Risk,"This business has a Medium Risk score due to unstable cash flow, high burn rate, low market presence."
+SME-070,0.795257334260736,79,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-071,0.8888618363462555,88,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-072,0.29140142951340897,29,High Risk,"This business has a High Risk score due to high burn rate, low market presence."
+SME-073,0.866123947388098,86,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-074,0.8623175726898777,86,Low Risk,This business has a Low Risk score driven by efficient marketing.
+SME-075,0.22945833333333332,22,High Risk,"This business has a High Risk score due to low profitability, inefficient ad spend."
+SME-076,0.7703152277761132,77,Low Risk,"This business has a Low Risk score driven by stable transaction volume, efficient marketing."
+SME-077,0.5702561438733225,57,Medium Risk,This business has a Medium Risk score due to low market presence.
+SME-078,0.8235386906966974,82,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-079,0.7567404144244034,75,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-080,0.9084809955668078,90,Low Risk,"This business has a Low Risk score driven by strong cash flow, stable transaction volume, efficient marketing."
+SME-081,0.7455249924333248,74,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-082,0.8696742190100314,86,Low Risk,"This business has a Low Risk score driven by strong cash flow, stable transaction volume, efficient marketing."
+SME-083,0.7672559280348965,76,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-084,0.5067361364899248,50,Medium Risk,"This business has a Medium Risk score due to unstable cash flow, low market presence."
+SME-085,0.7776731708516269,77,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-086,0.3982997958353994,39,High Risk,This business has a High Risk score due to low profitability.
+SME-087,0.7702561317681288,77,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-088,0.6686187031144041,66,Medium Risk,"This business has a Medium Risk score due to high burn rate, inefficient ad spend."
+SME-089,0.35980721633886864,35,High Risk,This business has a High Risk score due to low market presence.
+SME-090,0.8666108057672928,86,Low Risk,This business has a Low Risk score driven by stable transaction volume.
+SME-091,0.39320735147255115,39,High Risk,"This business has a High Risk score due to low profitability, high burn rate, inefficient ad spend."
+SME-092,0.7701055656093487,77,Low Risk,"This business has a Low Risk score driven by stable transaction volume, efficient marketing."
+SME-093,0.5805815346652328,58,Medium Risk,"This business has a Medium Risk score due to low profitability, inefficient ad spend."
+SME-094,0.7764790170327283,77,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-095,0.7936576234542003,79,Low Risk,This business has a Low Risk score driven by strong cash flow.
+SME-096,0.8005222120329472,80,Low Risk,"This business has a Low Risk score driven by strong cash flow, efficient marketing."
+SME-097,0.28014328544262757,28,High Risk,This business is flagged as High Risk due to a combination of moderate risk factors.
+SME-098,0.8409530235388357,84,Low Risk,"This business has a Low Risk score driven by strong cash flow, stable transaction volume, efficient marketing."
+SME-099,0.3634536787144137,36,High Risk,"This business has a High Risk score due to unstable cash flow, inefficient ad spend."
+SME-100,0.7500186072460744,75,Low Risk,"This business has a Low Risk score driven by stable transaction volume, efficient marketing."
