@@ -1,5 +1,7 @@
 # Alternative Credit Scoring for SMEs
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Mellisa19/Alternative-credit-scoring)
+
 A production-ready machine learning system designed to bridge the SME credit gap in emerging markets. By leveraging **alternative data** (cash flows, transaction logs, and digital marketing performance), this system provides reliable risk assessments for businesses that lack traditional credit history.
 
 ## 📌 Problem Statement
