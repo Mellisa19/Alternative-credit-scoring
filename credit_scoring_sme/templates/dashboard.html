@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 0;">
+    <header style="margin-bottom: 5rem;">
+        <p style="text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; font-size: 0.8rem; color: var(--emerald); margin-bottom: 1.5rem;">Member Dashboard</p>
+        <h1 style="font-size: 3.5rem;">Hello, {{ user.email.split('@')[0] }}.</h1>
+        <p style="opacity: 0.6; font-size: 1.1rem; margin-top: 1rem;">Welcome to your central credit intelligence hub.</p>
+    </header>
+
+    <div class="grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 4rem;">
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div class="step-card active" style="text-align: left; padding: 4rem; border-left: 12px solid var(--forest);">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Scale your Unlimited Portfolio.</h2>
+                <p style="margin-bottom: 2.5rem; font-size: 1.25rem;">You have full access to our credit engine. Run as many performance simulations as your growth requires.</p>
+                <a href="/assessment" class="btn-primary">Start New Analysis</a>
+            </div>
+
+            <div style="margin-top: 4rem;">
+                <h3 style="margin-bottom: 2.5rem;">Credit Snapshot</h3>
+                {% if snapshot %}
+                <div class="step-card active" style="padding: 3rem; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; margin-bottom: 0.5rem;">Current Standing</div>
+                        <div style="font-size: 2.5rem; font-family: 'Outfit'; font-weight: 800; color: var(--forest);">{{ snapshot.score }}</div>
+                        <div style="font-size: 1rem; font-weight: 700; color: var(--graphite); margin-top: 0.5rem;">{{ snapshot.risk_tier }}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; margin-bottom: 0.5rem;">Momentum</div>
+                        {% set momentum_color = 'var(--emerald)' if momentum == 'Improved' else ('#ef4444' if momentum == 'Declined' else 'var(--graphite)') %}
+                        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(0,0,0,0.03); border-radius: 20px; font-weight: 700; color: {{ momentum_color }};">
+                            {% if momentum == 'Improved' %}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                            {% elif momentum == 'Declined' %}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            {% endif %}
+                            {{ momentum }}
+                        </div>
+                        <p style="font-size: 0.75rem; margin-top: 1rem; opacity: 0.4;">Checked {{ snapshot.created_at[:10] }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div style="background: white; border-radius: var(--radius-md); padding: 3rem; text-align: center; border: 1px dashed rgba(0,0,0,0.1);">
+                    <p style="opacity: 0.5;">No historical profiles found. <br>Your future results will appear here automatically.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div>
+            <div class="step-card active" style="padding: 2.5rem; text-align: left;">
+                <h3 style="margin-bottom: 1.5rem;">Account Intelligence</h3>
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div>
+                        <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">Identity</p>
+                        <p style="font-weight: 600;">{{ user.email }}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">Joined</p>
+                        <p style="font-weight: 600;">{{ user.created_at[:10] }}</p>
+                    </div>
+                </div>
+                <div style="margin-top: 3rem; border-top: 1px solid #eee; padding-top: 2rem;">
+                    <a href="/logout" style="color: #ef4444; font-weight: 600; text-decoration: none; font-size: 0.9rem;">Disconnect Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

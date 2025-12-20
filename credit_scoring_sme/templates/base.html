@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} | CreditEngine</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    <!-- No external icons/placeholders, custom favicon logic optional -->
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="/" class="logo">Engine<span style="color: var(--amber);">.</span></a>
+                <div class="nav-links">
+                    <a href="/">Vision</a>
+                    <a href="/assessment">Assessment</a>
+                    {% if user %}
+                        <a href="/dashboard">Dashboard</a>
+                    {% endif %}
+                </div>
+                <div class="nav-actions">
+                    {% if user %}
+                        <a href="/logout" style="color: #ef4444; font-size: 0.8rem; text-decoration: none; margin-right: 1.5rem; font-weight: 600;">Logout</a>
+                        <a href="/assessment" class="btn-primary" style="padding: 0.8rem 1.5rem; font-size: 0.9rem;">New Case</a>
+                    {% else %}
+                        <a href="/login" style="margin-right: 1.5rem; font-weight: 600; text-decoration: none; color: var(--graphite); font-size: 0.9rem;">Log In</a>
+                        <a href="/signup" class="btn-primary" style="padding: 0.8rem 1.5rem; font-size: 0.9rem;">Join Vision</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer style="padding: 10rem 0 5rem; opacity: 0.5; font-size: 0.8rem; text-align: center;">
+        <div class="container">
+            <p>&copy; 2025 Intelligent Credit Risk Systems. Built for next-generation underwriting.</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

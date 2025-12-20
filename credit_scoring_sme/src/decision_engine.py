@@ -44,7 +44,7 @@ class CreditDecisionEngine:
             print(f"Warning: Could not load reference features: {e}")
             return pd.DataFrame() # Fallback
 
-    def credit_decision(self, input_data: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
+    def credit_decision(self, input_data: Dict[str, List[Dict[str, Any]]], loan_readiness: Dict[str, str] = None) -> Dict[str, Any]:
         """
         Decides credit worthiness for a single SME.
         """
@@ -91,7 +91,7 @@ class CreditDecisionEngine:
             return self._error_response(f"Model Inference Error: {e}")
 
         # 5. Explanation
-        summary = self._generate_summary(X_new, credit_score, risk_tier)
+        summary = self._generate_summary(X_new, credit_score, risk_tier, loan_readiness)
 
         return {
             "sme_id": "New_SME",
@@ -108,16 +108,13 @@ class CreditDecisionEngine:
         elif score >= 50: return "Medium Risk"
         return "High Risk"
 
-    def _generate_summary(self, X_row, score, tier):
+    def _generate_summary(self, X_row, score, tier, loan_readiness=None):
         reasons = []
         
         # Compare against reference population
         if not self.ref_df.empty:
-            # Calculate percentile of this applicant
-            # (how many in population are LOWER than this applicant)
             pcts = (self.ref_df < X_row.iloc[0]).mean()
             
-            # Logic: What stands out?
             if tier == 'Low Risk':
                 if pcts.get('net_cash_flow', 0) > 0.7: reasons.append("strong cash flow")
                 if pcts.get('txn_volatility', 1) < 0.3: reasons.append("stable transactions")
@@ -127,11 +124,35 @@ class CreditDecisionEngine:
                 if pcts.get('txn_volatility', 0) > 0.7: reasons.append("volatile transactions")
                 if pcts.get('burn_rate', 0) > 0.7: reasons.append("high burn rate")
         
-        if not reasons:
-            return f"This business is categorized as {tier} based on aggregate risk factors."
+        # --- PREMIUM LENDER-STYLE REASONING ---
+        lender_context = ""
+        if loan_readiness:
+            context_reasons = []
+            purpose = loan_readiness.get('loan_purpose')
+            age = loan_readiness.get('business_age')
+            conf = loan_readiness.get('repayment_confidence')
+
+            if purpose in ["Business expansion", "Marketing / advertising"] and score > 50:
+                context_reasons.append(f"Clear intent for {purpose.lower()} aligns with growth momentum")
             
-        joiner = "driven by" if tier == 'Low Risk' else "due to"
-        return f"This business has a {tier} score {joiner} {', '.join(reasons)}."
+            if age == "Over 3 years":
+                context_reasons.append("Operational maturity of 3+ years provides a stability premium")
+            elif age == "Less than 6 months":
+                context_reasons.append("Early-stage status suggests a conservative credit approach")
+            
+            if conf == "Very confident":
+                context_reasons.append("High repayment confidence is a strong borrower commitment signal")
+
+            if context_reasons:
+                lender_context = ". [Lender Perspective: " + " | ".join(context_reasons) + "]"
+
+        if not reasons:
+            base_summary = f"This business is categorized as {tier} based on aggregate risk factors"
+        else:
+            joiner = "driven by" if tier == 'Low Risk' else "due to"
+            base_summary = f"This business has a {tier} score {joiner} {', '.join(reasons)}"
+            
+        return base_summary + lender_context
 
     def _error_response(self, msg):
         return {"error": msg, "risk_tier": "Unknown", "credit_score": 0}

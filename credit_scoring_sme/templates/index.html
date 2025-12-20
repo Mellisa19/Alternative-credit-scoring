@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Vision{% endblock %}
+
+{% block content %}
+<section class="hero container">
+    <div class="hero-content">
+        <h1>Credit, <br><span style="color: var(--emerald)">Reimagined.</span></h1>
+        <p>Traditional underwriting is broken. We use alternative data to see the human performance behind the balance sheet.</p>
+        <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+            <a href="/assessment" class="btn-primary">
+                Run Your Free Assessment
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <p style="font-size: 0.8rem; opacity: 0.5; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">One-click Start. No account needed.</p>
+        </div>
+    </div>
+    
+    <div class="asymmetric-media">
+        <div class="media-blob"></div>
+        <div class="media-card">
+            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--amber); margin-bottom: 1rem; font-weight: 700;">Live Engine Metric</div>
+            <div style="font-size: 2rem; font-family: 'Outfit'; font-weight: 700; margin-bottom: 0.5rem;">$12.4M</div>
+            <p style="font-size: 0.8rem; margin: 0;">SME Capital Unlocked in Q4</p>
+            <div style="margin-top: 2rem; height: 100px; display: flex; align-items: flex-end; gap: 4px;">
+                <div style="flex: 1; background: var(--emerald); height: 40%; border-radius: 2px;"></div>
+                <div style="flex: 1; background: var(--amber); height: 60%; border-radius: 2px;"></div>
+                <div style="flex: 1; background: var(--emerald); height: 35%; border-radius: 2px;"></div>
+                <div style="flex: 1; background: var(--emerald); height: 80%; border-radius: 2px;"></div>
+                <div style="flex: 1; background: var(--forest); height: 55%; border-radius: 2px;"></div>
+                <div style="flex: 1; background: var(--emerald); height: 90%; border-radius: 2px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container" style="padding: 10rem 0;">
+    <div style="max-width: 800px;">
+        <h2 style="font-size: 3rem; margin-bottom: 4rem;">The data doesn't lie. <br>Your bank might.</h2>
+        <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem;">
+            <div>
+                <h3 style="margin-bottom: 1.5rem;">Velo-Data Analysis</h3>
+                <p>We analyze transaction velocity and stability over mere snapshots. Static balances are history; momentum is the future.</p>
+            </div>
+            <div>
+                <h3 style="margin-bottom: 1.5rem;">Marketing ROI Insights</h3>
+                <p>Growth efficiency is a credit metric. We reward businesses that know how to acquire customers sustainably.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

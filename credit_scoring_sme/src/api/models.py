@@ -14,10 +14,16 @@ class AdSpendInput(BaseModel):
     clicks: Optional[int] = 0
     conversions: Optional[int] = 0
 
+class LoanReadinessInput(BaseModel):
+    loan_purpose: str = Field(..., description="Purpose of the loan")
+    business_age: str = Field(..., description="Age of the business")
+    repayment_confidence: str = Field(..., description="Confidence level in repayment")
+
 class CreditDecisionRequest(BaseModel):
     business_id: str = Field(..., example="SME-001")
     transactions: List[TransactionInput]
     ad_spend: Optional[List[AdSpendInput]] = []
+    loan_readiness: Optional[LoanReadinessInput] = None
 
 class MetricsDetails(BaseModel):
     total_inflow: float
