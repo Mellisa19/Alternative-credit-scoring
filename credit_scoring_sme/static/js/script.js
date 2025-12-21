@@ -85,7 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
+    let isSubmitting = false;
+
     const handleSubmit = () => {
+        if (isSubmitting) return; // Prevent double submission
+        isSubmitting = true;
+
         // Find whichever submit button is currently visible/active
         wizardContent.style.opacity = '0';
         setTimeout(() => {
