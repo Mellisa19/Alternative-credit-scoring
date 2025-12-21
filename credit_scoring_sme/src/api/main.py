@@ -32,11 +32,33 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 static_dir = BASE_DIR / "static"
 templates_dir = BASE_DIR / "templates"
 
+print(f"DEBUG: BASE_DIR: {BASE_DIR}")
+print(f"DEBUG: templates_dir: {templates_dir} (Exists: {templates_dir.exists()})")
+print(f"DEBUG: static_dir: {static_dir} (Exists: {static_dir.exists()})")
+if not templates_dir.exists():
+    print(f"WARNING: Templates directory NOT found at {templates_dir}")
+    # Fallback to current directory for local dev if structure differs
+    if Path("templates").exists():
+        templates_dir = Path("templates").resolve()
+        print(f"DEBUG: Fallback templates_dir: {templates_dir}")
+
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 templates = Jinja2Templates(directory=str(templates_dir))
 
 # Global engine instance to load model at startup
 engine = None
+
+@app.get("/debug-info")
+async def debug_info():
+    return {
+        "base_dir": str(BASE_DIR),
+        "templates_dir": str(templates_dir),
+        "templates_exists": templates_dir.exists(),
+        "static_dir": str(static_dir),
+        "static_exists": static_dir.exists(),
+        "cwd": os.getcwd(),
+        "files_in_templates": [f.name for f in templates_dir.iterdir()] if templates_dir.exists() else []
+    }
 
 @app.on_event("startup")
 def startup_event():
@@ -73,11 +95,14 @@ async def join_vision(request: Request):
         return templates.TemplateResponse("join_vision.html", {"request": request})
     except Exception as e:
         # Fallback friendly error or return a simple error dict
-        return HTMLResponse(content=f"<h1>Something went wrong loading the vision page.</h1><p>Error: {str(e)}</p>", status_code=500)
+        return HTMLResponse(content=f"<h1>Something went wrong loading the vision page.</h1><p>Error: {str(e)}</p><p>Check <a href='/debug-info'>/debug-info</a></p>", status_code=500)
 
 @app.get("/signup", response_class=HTMLResponse)
 async def signup_page(request: Request):
-    return templates.TemplateResponse("signup.html", {"request": request})
+    try:
+        return templates.TemplateResponse("signup.html", {"request": request})
+    except Exception as e:
+        return HTMLResponse(content=f"<h1>Error loading signup page.</h1><p>Error: {str(e)}</p><p>Check <a href='/debug-info'>/debug-info</a></p>", status_code=500)
 
 @app.post("/signup")
 async def signup_process(
