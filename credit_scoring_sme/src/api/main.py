@@ -10,6 +10,7 @@ from src.api.database import init_db, get_user_by_email, create_user, save_asses
 import uvicorn
 import os
 import json
+from pathlib import Path
 
 app = FastAPI(
     title="SME Credit Scoring API",
@@ -17,9 +18,22 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Setup Templates and Static Files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+# Setup Templates and Static Files - Render Compatible Absolute Paths
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# Expects structure:
+# credit_scoring_sme/
+#   src/
+#     api/
+#       main.py
+#   static/
+#   templates/
+
+# Ensure directories exist
+static_dir = BASE_DIR / "static"
+templates_dir = BASE_DIR / "templates"
+
+app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+templates = Jinja2Templates(directory=str(templates_dir))
 
 # Global engine instance to load model at startup
 engine = None
@@ -52,6 +66,14 @@ def health_check():
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, user=Depends(get_current_user)):
     return templates.TemplateResponse("index.html", {"request": request, "user": user})
+
+@app.get("/join-vision", response_class=HTMLResponse)
+async def join_vision(request: Request):
+    try:
+        return templates.TemplateResponse("join_vision.html", {"request": request})
+    except Exception as e:
+        # Fallback friendly error or return a simple error dict
+        return HTMLResponse(content=f"<h1>Something went wrong loading the vision page.</h1><p>Error: {str(e)}</p>", status_code=500)
 
 @app.get("/signup", response_class=HTMLResponse)
 async def signup_page(request: Request):

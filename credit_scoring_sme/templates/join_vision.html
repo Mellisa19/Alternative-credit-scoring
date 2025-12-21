@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Our Vision{% endblock %}
+
+{% block content %}
+<div class="hero" style="position: relative; padding: 8rem 0 6rem; overflow: hidden;">
+    <div style="position: absolute; top: -50%; right: -20%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0) 70%); z-index: -1;"></div>
+    
+    <div class="container">
+        <div class="hero-content" style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h1 style="font-size: 3.5rem; letter-spacing: -0.02em; margin-bottom: 1.5rem;">
+                More than a score. <br>
+                <span class="gradient-text">A financial identity.</span>
+            </h1>
+            <p style="font-size: 1.25rem; color: var(--slate); line-height: 1.6; margin-bottom: 3rem;">
+                The traditional credit system was built for a world that no longer exists. 
+                We are building the engine for the future of SME underwriting—where data speaks, 
+                and potential is recognized.
+            </p>
+            
+            <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; text-align: left; margin-top: 4rem;">
+                <div class="glass-card" style="padding: 2rem;">
+                    <div style="width: 48px; height: 48px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--amber);">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"></path></svg>
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem;">Inclusive Assessment</h3>
+                    <p style="font-size: 0.95rem; color: var(--slate);">Moving beyond FICO to understand the real-time health of a business through transactional data.</p>
+                </div>
+                
+                <div class="glass-card" style="padding: 2rem;">
+                    <div style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: #10b981;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4L12 14.01l-3-3"></path></svg>
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem;">Instant Decisions</h3>
+                    <p style="font-size: 0.95rem; color: var(--slate);">Automated pipelines that reduce underwriting time from weeks to seconds.</p>
+                </div>
+                
+                <div class="glass-card" style="padding: 2rem;">
+                    <div style="width: 48px; height: 48px; background: rgba(59, 130, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: #3b82f6;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem;">Transparent Model</h3>
+                    <p style="font-size: 0.95rem; color: var(--slate);">No black boxes. We provide context and reasoning for every API decision.</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 5rem;">
+                <a href="/signup" class="btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;">Join the Beta</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
