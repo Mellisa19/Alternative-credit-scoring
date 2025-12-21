@@ -41,7 +41,9 @@ class CreditDecisionEngine:
             df = fe.build_dataset(t, a, l)
             return df.drop('is_default', axis=1) # Keep raw features
         except Exception as e:
-            print(f"Warning: Could not load reference features: {e}")
+            # Reference data is optional - used only for percentile comparisons in summaries
+            # Deployment environments (like Render) typically don't include training data
+            print(f"INFO: Reference features not available (percentile comparisons disabled). This is expected in production.")
             return pd.DataFrame() # Fallback
 
     def credit_decision(self, input_data: Dict[str, List[Dict[str, Any]]], loan_readiness: Dict[str, str] = None) -> Dict[str, Any]:
