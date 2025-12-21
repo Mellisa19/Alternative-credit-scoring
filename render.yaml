@@ -5,7 +5,7 @@ services:
     plan: free
     region: oregon
     buildCommand: python -m pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: gunicorn -w 2 -k uvicorn.workers.UvicornWorker src.api.main:app --bind 0.0.0.0:$PORT
+    startCommand: gunicorn -w 1 -k uvicorn.workers.UvicornWorker src.api.main:app --bind 0.0.0.0:$PORT
     rootDir: credit_scoring_sme
     envVars:
       - key: PYTHON_VERSION
