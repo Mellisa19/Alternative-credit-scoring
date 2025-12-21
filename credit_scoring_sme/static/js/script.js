@@ -89,6 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleSubmit = () => {
         if (isSubmitting) return; // Prevent double submission
+
+        // Final validation before submitting
+        const allInputs = wizardForm.querySelectorAll('input[required], select[required]');
+        for (const input of allInputs) {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                return;
+            }
+        }
+
         isSubmitting = true;
 
         // Find whichever submit button is currently visible/active
@@ -103,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Global listener for submit buttons inside the wizard
     wizardForm.addEventListener('click', (e) => {
         if (e.target && e.target.id === 'submit-btn') {
+            e.preventDefault(); // Prevent default form submission
             if (validateStep(currentStep)) {
                 handleSubmit();
             }

@@ -21,6 +21,31 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Global exception handler to catch all errors gracefully
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """
+    Global exception handler to prevent unhandled errors from crashing the app.
+    Returns user-friendly error pages instead of 500 errors.
+    """
+    print(f"GLOBAL ERROR HANDLER: {type(exc).__name__}: {str(exc)}")
+    
+    # If it's an HTML request, return a friendly error page
+    if "text/html" in request.headers.get("accept", ""):
+        return templates.TemplateResponse(
+            "error.html" if (BASE_DIR / "templates" / "error.html").exists() else "index.html",
+            {"request": request, "error": "An unexpected error occurred. Please try again."},
+            status_code=500
+        )
+    
+    # Otherwise return JSON error for API calls
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error. Please try again later."}
+    )
+
 # Setup Templates and Static Files - Render Compatible Absolute Paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # Expects structure:
@@ -226,39 +251,88 @@ async def dashboard(request: Request, user=Depends(get_current_user)):
 
 @app.get("/assessment", response_class=HTMLResponse)
 async def assessment_form(request: Request, user=Depends(get_current_user)):
-    # Pre-fill logic for members
-    inputs = None
-    if user:
-        latest = get_latest_assessments(user["id"], limit=1)
-        if latest:
-            inputs = json.loads(latest[0]["inputs_json"])
-            # Add profile context to inputs for pre-filling Phase IV
-            inputs["loan_purpose"] = user["loan_purpose"]
-            inputs["business_age"] = user["business_age"]
-            inputs["repayment_confidence"] = user["repayment_confidence"]
-            
-    return templates.TemplateResponse("assessment.html", {
-        "request": request, 
-        "user": user,
-        "inputs": inputs # For pre-filling
-    })
+    """
+    Display assessment form. Pre-fills data for authenticated users.
+    """
+    try:
+        # Pre-fill logic for members
+        inputs = None
+        if user:
+            try:
+                latest = get_latest_assessments(user["id"], limit=1)
+                if latest:
+                    inputs = json.loads(latest[0]["inputs_json"])
+                    # Add profile context to inputs for pre-filling Phase IV
+                    inputs["loan_purpose"] = user.get("loan_purpose")
+                    inputs["business_age"] = user.get("business_age")
+                    inputs["repayment_confidence"] = user.get("repayment_confidence")
+            except Exception as db_error:
+                # Log but continue - just don't pre-fill
+                print(f"WARNING: Failed to load user's previous assessments: {db_error}")
+                
+        return templates.TemplateResponse("assessment.html", {
+            "request": request, 
+            "user": user,
+            "inputs": inputs # For pre-filling
+        })
+    except Exception as e:
+        print(f"ERROR in assessment_form: {type(e).__name__}: {str(e)}")
+        # Return minimal assessment page
+        return templates.TemplateResponse("assessment.html", {
+            "request": request, 
+            "user": user,
+            "inputs": None
+        })
 
 @app.get("/results", response_class=HTMLResponse)
 async def show_results(request: Request, id: str, user=Depends(get_current_user)):
-    # Retrieve result from cache
-    cached_data = get_result(id)
-    
-    if not cached_data:
-        # Result expired or invalid ID - redirect back to assessment
-        return RedirectResponse(url="/assessment", status_code=status.HTTP_302_FOUND)
-    
-    return templates.TemplateResponse("results.html", {
-        "request": request,
-        "result": cached_data["result"],
-        "user": cached_data["user"],  # Use cached user state
-        "lender_insight": cached_data["lender_insight"],
-        "inputs": cached_data["inputs"]
-    })
+    """
+    Display assessment results. Shows error message if result expired/invalid.
+    NEVER redirects to /assessment to prevent loops.
+    """
+    try:
+        # Retrieve result from cache
+        cached_data = get_result(id)
+        
+        if not cached_data:
+            # Result expired or invalid ID - show error in results page
+            expired_result = {
+                "credit_score": "--",
+                "risk_tier": "Session Expired",
+                "decision_summary": "Your assessment session has expired. Please run a new assessment.",
+                "error": "session_expired"
+            }
+            return templates.TemplateResponse("results.html", {
+                "request": request,
+                "result": expired_result,
+                "user": user,
+                "lender_insight": "",
+                "inputs": {"daily_revenue": 0, "daily_expenses": 0, "ad_spend": 0, "num_transactions": 0}
+            })
+        
+        return templates.TemplateResponse("results.html", {
+            "request": request,
+            "result": cached_data["result"],
+            "user": cached_data.get("user"),
+            "lender_insight": cached_data.get("lender_insight", ""),
+            "inputs": cached_data.get("inputs", {})
+        })
+    except Exception as e:
+        print(f"ERROR in show_results: {type(e).__name__}: {str(e)}")
+        # Return fallback results page
+        error_result = {
+            "credit_score": "--",
+            "risk_tier": "Error",
+            "decision_summary": "Unable to load results. Please try running a new assessment.",
+            "error": "load_error"
+        }
+        return templates.TemplateResponse("results.html", {
+            "request": request,
+            "result": error_result,
+            "user": user,
+            "lender_insight": "",
+            "inputs": {"daily_revenue": 0, "daily_expenses": 0, "ad_spend": 0, "num_transactions": 0}
+        })
 
 
 @app.post("/assessment", response_class=HTMLResponse)
@@ -273,56 +347,86 @@ async def process_assessment(
     repayment_confidence: str = Form(None),
     user=Depends(get_current_user)
 ):
-    if engine is None:
-        return templates.TemplateResponse("assessment.html", {
-            "request": request,
-            "error": "Model not loaded or failed to initialize. Please try again later."
-        })
+    """
+    CRITICAL: This endpoint ALWAYS redirects to /results, even on errors.
+    It never re-renders assessment.html to prevent form submission loops.
+    """
     
-    # Map simplified inputs to CreditDecisionEngine format
-    # We simulate a balanced mix of sales and expenses to meet num_transactions
-    transactions = []
-    num_sales = max(1, num_transactions // 2)
-    num_expenses = max(1, num_transactions - num_sales)
-    
-    avg_sale = daily_revenue / num_sales
-    avg_expense = daily_expenses / num_expenses
-    
-    for _ in range(num_sales):
-        transactions.append(TransactionInput(
-            date=date.today(),
-            amount=avg_sale,
-            transaction_type="Sales"
-        ))
-    
-    for _ in range(num_expenses):
-        transactions.append(TransactionInput(
-            date=date.today(),
-            amount=-avg_expense,
-            transaction_type="Expense"
-        ))
-        
-    ad_spend_list = [AdSpendInput(
-        date=date.today(),
-        spend_amount=ad_spend,
-        clicks=int(ad_spend * 0.1), # Placeholder logic for clicks
-        conversions=int(ad_spend * 0.01) # Placeholder logic for conversions
-    )]
-    
-    # Pack into the internal request format
-    api_request = CreditDecisionRequest(
-        business_id="WEB-APP-USER",
-        transactions=transactions,
-        ad_spend=ad_spend_list
-    )
-    
-    # Call internal API logic
-    input_data = {
-        "transactions": [t.dict() for t in api_request.transactions],
-        "ad_spend": [a.dict() for a in api_request.ad_spend]
+    # Initialize fallback result structure
+    fallback_result = {
+        "credit_score": "N/A",
+        "risk_tier": "Unknown",
+        "decision_summary": "Unable to complete assessment. Please try again.",
+        "error": None
     }
     
     try:
+        # Validate inputs
+        if daily_revenue < 0 or daily_expenses < 0 or ad_spend < 0 or num_transactions < 1:
+            raise ValueError("Invalid input values. All financial values must be positive and transactions must be at least 1.")
+        
+        # Check if engine is loaded
+        if engine is None:
+            fallback_result["error"] = "Model not loaded. Our system is temporarily unavailable."
+            result_id = store_result({
+                "result": fallback_result,
+                "user": user,
+                "lender_insight": "",
+                "inputs": {
+                    "daily_revenue": daily_revenue,
+                    "daily_expenses": daily_expenses,
+                    "ad_spend": ad_spend,
+                    "num_transactions": num_transactions,
+                    "loan_purpose": loan_purpose,
+                    "business_age": business_age,
+                    "repayment_confidence": repayment_confidence
+                }
+            })
+            return RedirectResponse(url=f"/results?id={result_id}", status_code=status.HTTP_303_SEE_OTHER)
+        
+        # Map simplified inputs to CreditDecisionEngine format
+        # We simulate a balanced mix of sales and expenses to meet num_transactions
+        transactions = []
+        num_sales = max(1, num_transactions // 2)
+        num_expenses = max(1, num_transactions - num_sales)
+        
+        avg_sale = daily_revenue / num_sales if num_sales > 0 else 0
+        avg_expense = daily_expenses / num_expenses if num_expenses > 0 else 0
+        
+        for _ in range(num_sales):
+            transactions.append(TransactionInput(
+                date=date.today(),
+                amount=avg_sale,
+                transaction_type="Sales"
+            ))
+        
+        for _ in range(num_expenses):
+            transactions.append(TransactionInput(
+                date=date.today(),
+                amount=-avg_expense,
+                transaction_type="Expense"
+            ))
+            
+        ad_spend_list = [AdSpendInput(
+            date=date.today(),
+            spend_amount=ad_spend,
+            clicks=int(ad_spend * 0.1), # Placeholder logic for clicks
+            conversions=int(ad_spend * 0.01) # Placeholder logic for conversions
+        )]
+        
+        # Pack into the internal request format
+        api_request = CreditDecisionRequest(
+            business_id="WEB-APP-USER",
+            transactions=transactions,
+            ad_spend=ad_spend_list
+        )
+        
+        # Call internal API logic
+        input_data = {
+            "transactions": [t.dict() for t in api_request.transactions],
+            "ad_spend": [a.dict() for a in api_request.ad_spend]
+        }
+        
         # Extract Loan Readiness Context ONLY if user is logged in
         loan_readiness = None
         if user:
@@ -343,24 +447,28 @@ async def process_assessment(
 
         # PERSISTENCE: Save for members
         if user:
-            # Save the point-in-time assessment
-            save_assessment(
-                user_id=user["id"],
-                score=result["credit_score"],
-                risk_tier=result["risk_tier"],
-                summary=result["decision_summary"],
-                inputs={
-                    "daily_revenue": daily_revenue,
-                    "daily_expenses": daily_expenses,
-                    "ad_spend": ad_spend,
-                    "num_transactions": num_transactions
-                },
-                loan_purpose=loan_purpose,
-                business_age=business_age,
-                repayment_confidence=repayment_confidence
-            )
-            # Update core user profile for future pre-filling
-            update_user_profile(user["id"], loan_purpose, business_age, repayment_confidence)
+            try:
+                # Save the point-in-time assessment
+                save_assessment(
+                    user_id=user["id"],
+                    score=result["credit_score"],
+                    risk_tier=result["risk_tier"],
+                    summary=result["decision_summary"],
+                    inputs={
+                        "daily_revenue": daily_revenue,
+                        "daily_expenses": daily_expenses,
+                        "ad_spend": ad_spend,
+                        "num_transactions": num_transactions
+                    },
+                    loan_purpose=loan_purpose,
+                    business_age=business_age,
+                    repayment_confidence=repayment_confidence
+                )
+                # Update core user profile for future pre-filling
+                update_user_profile(user["id"], loan_purpose, business_age, repayment_confidence)
+            except Exception as db_error:
+                # Log but don't fail - we still show results
+                print(f"WARNING: Failed to save assessment to database: {db_error}")
 
         # Store result in cache and redirect to results page
         result_id = store_result({
@@ -378,11 +486,34 @@ async def process_assessment(
             }
         })
         return RedirectResponse(url=f"/results?id={result_id}", status_code=status.HTTP_303_SEE_OTHER)
+        
+    except ValueError as ve:
+        # Validation error - return fallback with error message
+        fallback_result["error"] = str(ve)
+        fallback_result["decision_summary"] = f"Validation Error: {str(ve)}"
+        
     except Exception as e:
-        return templates.TemplateResponse("assessment.html", {
-            "request": request,
-            "error": f"Assessment Error: {str(e)}"
-        })
+        # Any other error - return fallback with generic error message
+        print(f"ERROR in process_assessment: {type(e).__name__}: {str(e)}")
+        fallback_result["error"] = "An unexpected error occurred during assessment."
+        fallback_result["decision_summary"] = "Unable to complete assessment due to a technical issue. Please verify your inputs and try again."
+    
+    # CRITICAL: Always store and redirect, even on errors
+    result_id = store_result({
+        "result": fallback_result,
+        "user": user,
+        "lender_insight": "",
+        "inputs": {
+            "daily_revenue": daily_revenue,
+            "daily_expenses": daily_expenses,
+            "ad_spend": ad_spend,
+            "num_transactions": num_transactions,
+            "loan_purpose": loan_purpose,
+            "business_age": business_age,
+            "repayment_confidence": repayment_confidence
+        }
+    })
+    return RedirectResponse(url=f"/results?id={result_id}", status_code=status.HTTP_303_SEE_OTHER)
 
 # --- Existing API Routes ---
 

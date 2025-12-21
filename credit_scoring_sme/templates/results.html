@@ -10,7 +10,25 @@
             <p style="text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; font-size: 0.8rem; color: var(--emerald); margin-bottom: 2rem;">Decision Intelligence v1.0</p>
             <h1 style="font-size: clamp(2rem, 6vw, 4rem);">{% if user %}Profile Update{% else %}Risk Outcome{% endif %}</h1>
         </div>
-
+        
+        {% if result.credit_score == "N/A" or result.credit_score == "--" %}
+        {# ERROR STATE: Show friendly error message when scoring fails #}
+        <div class="reveal-anim delay-1" style="margin: 4rem 0; text-align: center;">
+            <div class="step-card" style="background: rgba(239, 68, 68, 0.05); border: 2px solid #ef4444; padding: clamp(2rem, 4vw, 3rem);">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+                <h2 style="font-size: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 1.5rem; color: #ef4444;">{{ result.risk_tier|default("Assessment Unavailable") }}</h2>
+                <p style="font-size: 1.1rem; line-height: 1.6; color: var(--graphite); margin-bottom: 2.5rem;">{{ result.decision_summary|default("Unable to complete assessment. Please try again.") }}</p>
+                <a href="/assessment" class="btn-primary">Try Again</a>
+            </div>
+        </div>
+        {% else %}
+        {# SUCCESS STATE: Show normal results with score and insights #}
         <div class="reveal-anim delay-1" style="margin: 4rem 0;">
             <div class="score-display">
                 <svg width="320" height="320" class="score-circle-svg" style="max-width: 100%;">
@@ -69,7 +87,7 @@
                     {% endfor %}
                 </div>
                 <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; opacity: 0.6; font-style: italic;">
-                    Insight generated based on your declared objective of "{{ inputs.loan_purpose.lower() }}" and business maturity.
+                    Insight generated based on your declared objective of "{{ inputs.loan_purpose|default('unspecified')|lower }}" and business maturity.
                 </div>
             </div>
         </div>
@@ -93,6 +111,8 @@
                 <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.7;">Focus on stabilizing your burn-rate-to-revenue ratio and increasing transaction frequency.</p>
             </div>
         </div>
+        {% endif %}
+        {# End of SUCCESS STATE #}
 
         <!-- What-If Simulator -->
         <div class="reveal-anim delay-3">
@@ -106,9 +126,9 @@
                         <div class="slider-group">
                             <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
                                 <label style="font-weight: 600; font-size: clamp(0.9rem, 2vw, 1.1rem);">Marketing Investment</label>
-                                <span style="font-family: 'Outfit'; color: var(--emerald); font-weight: 700;">$ <span id="sim-ad-val">{{ inputs.ad_spend|round(0) }}</span> / day</span>
+                                <span style="font-family: 'Outfit'; color: var(--emerald); font-weight: 700;">$ <span id="sim-ad-val">{{ inputs.ad_spend|default(0)|round(0) }}</span> / day</span>
                             </div>
-                            <input type="range" class="range-slider" id="sim-ad-spend" min="0" max="{{ inputs.ad_spend * 3 }}" value="{{ inputs.ad_spend }}" step="10">
+                            <input type="range" class="range-slider" id="sim-ad-spend" min="0" max="{{ (inputs.ad_spend|default(100) * 3)|round(0) }}" value="{{ inputs.ad_spend|default(100) }}" step="10">
                             <p style="font-size: 0.8rem; opacity: 0.5;">Adjusting ad spend impacts your modeled ROI and revenue momentum.</p>
                         </div>
                     </div>
