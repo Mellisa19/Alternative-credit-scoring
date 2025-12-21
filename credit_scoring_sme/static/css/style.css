@@ -518,14 +518,4 @@ nav {
     .hero {
         grid-template-columns: 1fr;
         text-align: center;
-    }
-
-    .hero-content p {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .asymmetric-media {
-        display: none;
-    }
-}
+        ```

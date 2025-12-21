@@ -11,6 +11,9 @@ import uvicorn
 import os
 import json
 from pathlib import Path
+import secrets
+from collections import OrderedDict
+import time
 
 app = FastAPI(
     title="SME Credit Scoring API",
@@ -47,6 +50,36 @@ templates = Jinja2Templates(directory=str(templates_dir))
 
 # Global engine instance to load model at startup
 engine = None
+
+# Simple in-memory cache for assessment results (expires after 10 min)
+results_cache = OrderedDict()
+CACHE_MAX_ITEMS = 100
+CACHE_EXPIRY_SECONDS = 600  # 10 minutes
+
+def store_result(result_data):
+    """Store result with unique ID and return the ID"""
+    result_id = secrets.token_urlsafe(16)
+    timestamp = time.time()
+    
+    # Clean old entries
+    current_time = time.time()
+    expired_keys = [k for k, v in results_cache.items() if current_time - v['timestamp'] > CACHE_EXPIRY_SECONDS]
+    for k in expired_keys:
+        del results_cache[k]
+    
+    # Limit cache size
+    while len(results_cache) >= CACHE_MAX_ITEMS:
+        results_cache.popitem(last=False)
+    
+    results_cache[result_id] = {'data': result_data, 'timestamp': timestamp}
+    return result_id
+
+def get_result(result_id):
+    """Retrieve and remove result from cache"""
+    entry = results_cache.pop(result_id, None)
+    if entry and (time.time() - entry['timestamp']) < CACHE_EXPIRY_SECONDS:
+        return entry['data']
+    return None
 
 @app.get("/debug-info")
 async def debug_info():
@@ -210,6 +243,24 @@ async def assessment_form(request: Request, user=Depends(get_current_user)):
         "inputs": inputs # For pre-filling
     })
 
+@app.get("/results", response_class=HTMLResponse)
+async def show_results(request: Request, id: str, user=Depends(get_current_user)):
+    # Retrieve result from cache
+    cached_data = get_result(id)
+    
+    if not cached_data:
+        # Result expired or invalid ID - redirect back to assessment
+        return RedirectResponse(url="/assessment", status_code=status.HTTP_302_FOUND)
+    
+    return templates.TemplateResponse("results.html", {
+        "request": request,
+        "result": cached_data["result"],
+        "user": cached_data["user"],  # Use cached user state
+        "lender_insight": cached_data["lender_insight"],
+        "inputs": cached_data["inputs"]
+    })
+
+
 @app.post("/assessment", response_class=HTMLResponse)
 async def process_assessment(
     request: Request,
@@ -311,11 +362,11 @@ async def process_assessment(
             # Update core user profile for future pre-filling
             update_user_profile(user["id"], loan_purpose, business_age, repayment_confidence)
 
-        return templates.TemplateResponse("assessment.html", {
-            "request": request,
+        # Store result in cache and redirect to results page
+        result_id = store_result({
             "result": result,
             "user": user,
-            "lender_insight": lender_insight, # Explicitly pass but also baked into summary
+            "lender_insight": lender_insight,
             "inputs": {
                 "daily_revenue": daily_revenue,
                 "daily_expenses": daily_expenses,
@@ -326,6 +377,7 @@ async def process_assessment(
                 "repayment_confidence": repayment_confidence
             }
         })
+        return RedirectResponse(url=f"/results?id={result_id}", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         return templates.TemplateResponse("assessment.html", {
             "request": request,

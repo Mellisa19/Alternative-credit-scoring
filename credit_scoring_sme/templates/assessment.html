@@ -131,138 +131,13 @@
     <!-- Dramatic Loading Screen -->
     <div id="loading-screen" style="display: none; text-align: center; padding: 10rem 0;">
         <div class="reveal-anim">
-            <h2 style="font-size: 2.5rem; margin-bottom: 2rem; font-family: 'Outfit';">Synthesizing Performance Vectors...</h2>
+            <h2 style="font-size: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 2rem; font-family: 'Outfit';">Synthesizing Performance Vectors...</h2>
             <div style="width: 240px; height: 1px; background: rgba(0,0,0,0.1); margin: 0 auto; position: relative; overflow: hidden;">
                 <div style="position: absolute; width: 60%; height: 100%; background: var(--forest); animation: slideLeft 1.2s infinite ease-in-out;"></div>
             </div>
             <p style="margin-top: 2rem; opacity: 0.6; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase;">Connecting to Alternative Risk Core v1</p>
         </div>
     </div>
-
-    {% else %}
-    <!-- Dramatic Reveal Screen -->
-    <div class="reveal-screen">
-        <div class="reveal-anim">
-            <p style="text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; font-size: 0.8rem; color: var(--emerald); margin-bottom: 2rem;">Decision Intelligence v1.0</p>
-            <h1 style="font-size: 4rem;">{% if user %}Profile Update{% else %}Risk Outcome{% endif %}</h1>
-        </div>
-
-        <div class="reveal-anim delay-1" style="margin: 4rem 0;">
-            <div class="score-display">
-                <svg width="320" height="320" class="score-circle-svg">
-                    <circle cx="160" cy="160" r="150" stroke="rgba(0,0,0,0.03)" stroke-width="12" fill="transparent" />
-                    <circle class="progress" cx="160" cy="160" r="150" stroke="var(--forest)" stroke-width="12" fill="transparent" stroke-linecap="round" />
-                </svg>
-                <div class="score-text-overlay">
-                    <div id="score-value" class="score-value" data-target="{{ result.credit_score }}">0</div>
-                    <div style="text-transform: uppercase; letter-spacing: 0.2em; font-weight: 600; font-size: 0.75rem; opacity: 0.4;">Credit Momentum</div>
-                </div>
-            </div>
-            
-            {% set tier_color = 'var(--emerald)' if result.risk_tier == 'Low Risk' else ('var(--amber)' if result.risk_tier == 'Medium Risk' else '#ef4444') %}
-            <div style="margin-top: 2.5rem; font-size: 1.8rem; font-family: 'Outfit'; font-weight: 800; color: {{ tier_color }}; text-transform: uppercase; letter-spacing: 0.1em;">
-                {{ result.risk_tier }}
-            </div>
-        </div>
-
-        {% if not user %}
-        <!-- Join CTA for Guest Users -->
-        <div class="reveal-anim delay-2" style="margin: 4rem 0;">
-            <div class="step-card active" style="background: var(--charcoal); color: white; padding: 3rem; text-align: center;">
-                <h3 style="color: white; font-size: 1.8rem; margin-bottom: 1rem;">Keep this momentum?</h3>
-                <p style="opacity: 0.8; margin-bottom: 2.5rem;">Create a free account to save this credit profile to your dashboard and unlock unlimited engine runs.</p>
-                <div style="display: flex; gap: 1.5rem; justify-content: center;">
-                    <a href="/signup" class="btn-primary">Connect My Profile</a>
-                    <a href="/login" style="color: white; font-weight: 600; text-decoration: none; align-self: center; font-size: 0.9rem;">I have an account</a>
-                </div>
-            </div>
-        </div>
-        <script>
-            // Mark assessment as used for this browser session/local storage
-            localStorage.setItem('has_assessed', 'true');
-        </script>
-        {% endif %}
-
-        {% if user and lender_insight %}
-        <!-- Premium Lender Insights -->
-        <div class="reveal-anim delay-2" style="margin: 4rem 0;">
-            <div class="step-card active" style="background: rgba(var(--emerald-rgb), 0.05); border: 1px solid var(--emerald); padding: 3rem; text-align: left;">
-                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem;">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--forest); display: flex; align-items: center; justify-content: center; color: white;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                    </div>
-                    <div>
-                        <h3 style="margin: 0; color: var(--forest); font-size: 1.5rem; font-family: 'Outfit';">Lender Readiness Analysis</h3>
-                        <p style="margin: 0; font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.1em;">Premium Account Holder Insight</p>
-                    </div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    {% for reason in lender_insight.split(' | ') %}
-                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); margin-top: 0.6rem; flex-shrink: 0;"></div>
-                        <p style="font-size: 1.1rem; line-height: 1.6; color: var(--graphite); margin: 0;">{{ reason }}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; opacity: 0.6; font-style: italic;">
-                    Insight generated based on your declared objective of "{{ inputs.loan_purpose.lower() }}" and business maturity.
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Categorized Insight Section -->
-        <div class="insight-grid reveal-anim delay-2">
-            <div class="insight-card strength typewriter">
-                <div style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--emerald); margin-bottom: 1.5rem;">Core Strength</div>
-                <h3 style="font-size: 1.25rem;">{{ result.decision_summary.split('driven by')[1] if 'driven by' in result.decision_summary else 'Stable performance consistency.' }}</h3>
-                <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.7;">The engine detected healthy indicators in your transaction flow.</p>
-            </div>
-            <div class="insight-card risk typewriter">
-                <div style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--amber); margin-bottom: 1.5rem;">Identified Risk</div>
-                <h3 style="font-size: 1.25rem;">{{ result.decision_summary.split('due to')[1] if 'due to' in result.decision_summary else 'Limited historical volatility data.' }}</h3>
-                <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.7;">Our metrics suggest areas where cash-flow preservation could be optimized.</p>
-            </div>
-            <div class="insight-card path typewriter">
-                <div style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--forest); margin-bottom: 1.5rem;">The Pathway</div>
-                <h3 style="font-size: 1.25rem;">Optimize Efficiency</h3>
-                <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.7;">Focus on stabilizing your burn-rate-to-revenue ratio and increasing transaction frequency.</p>
-            </div>
-        </div>
-
-        <!-- What-If Simulator -->
-        <div class="reveal-anim delay-3">
-            <div class="what-if-panel">
-                <div class="what-if-header">
-                    <h2 style="color: white; font-size: 2.5rem;">What-If Simulator</h2>
-                    <p style="color: rgba(255,255,255,0.6);">See how strategic growth adjustments could shift your risk profile.</p>
-                </div>
-                <div class="what-if-grid">
-                    <div class="simulator-controls">
-                        <div class="slider-group">
-                            <div style="display: flex; justify-content: space-between;">
-                                <label style="font-weight: 600; font-size: 1.1rem;">Marketing Investment</label>
-                                <span style="font-family: 'Outfit'; color: var(--emerald); font-weight: 700;">$ <span id="sim-ad-val">{{ inputs.ad_spend|round(0) }}</span> / day</span>
-                            </div>
-                            <input type="range" class="range-slider" id="sim-ad-spend" min="0" max="{{ inputs.ad_spend * 3 }}" value="{{ inputs.ad_spend }}" step="10">
-                            <p style="font-size: 0.8rem; opacity: 0.5;">Adjusting ad spend impacts your modeled ROI and revenue momentum.</p>
-                        </div>
-                    </div>
-                    
-                    <div style="text-align: center; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 3rem;">
-                        <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1.5rem; opacity: 0.5;">Simulated Outcome</p>
-                        <div id="sim-score-value" style="font-size: 6rem; font-family: 'Outfit'; font-weight: 800; line-height: 1;">{{ result.credit_score }}</div>
-                        <div id="sim-impact" class="sim-impact-tag" style="display: inline-block; margin-top: 1rem;">Baseline Score</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 6rem;">
-                <a href="/assessment" class="btn-primary" style="background: transparent; border: 2px solid var(--forest); color: var(--forest);">Reset Analysis</a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
 <style>
@@ -275,14 +150,4 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', path='/js/script.js') }}"></script>
-<script>
-// Simple binding for the slider val display
-const adSlider = document.getElementById('sim-ad-spend');
-const adValDisplay = document.getElementById('sim-ad-val');
-if (adSlider && adValDisplay) {
-    adSlider.addEventListener('input', (e) => {
-        adValDisplay.textContent = e.target.value;
-    });
-}
-</script>
 {% endblock %}
