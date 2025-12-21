@@ -64,13 +64,18 @@ async def debug_info():
 def startup_event():
     global engine
     # Initialize Database
-    init_db()
+    # Initialize Database with error handling
+    try:
+        init_db()
+    except Exception as e:
+        print(f"CRITICAL: Database initialization failed: {e}")
+        # Continue startup so we can at least serve the error/debug page
     try:
         # Load versioned model v1 by default
         engine = CreditDecisionEngine(model_version='v1')
         print("Model and Database loaded successfully.")
     except Exception as e:
-        print(f"Error loading model during startup: {e}")
+        print(f"CRITICAL: Error loading model during startup: {e}")
         # We don't raise here to allow the instance to stay up for debugging /health
         # but subsequent /credit-decision calls will handle engine being None
 

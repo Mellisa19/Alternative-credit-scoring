@@ -3,7 +3,18 @@ import os
 import json
 from datetime import datetime
 
-DATABASE_URL = "users.db"
+from pathlib import Path
+
+# Use absolute path for DB to avoid CWD ambiguity
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# Expects structure:
+# credit_scoring_sme/
+#   src/
+#     api/
+#       database.py
+#   users.db
+
+DATABASE_URL = str(BASE_DIR / "users.db")
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE_URL)
